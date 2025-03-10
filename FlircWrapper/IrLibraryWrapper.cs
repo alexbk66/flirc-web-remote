@@ -48,6 +48,11 @@ namespace FlircWrapper
         {
             switch (RuntimeInformation.ProcessArchitecture)
             {
+                case Architecture.X86:
+                    // WINDOWS
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+                        return "libs/win/libir.dll";
+                    break;
                 case Architecture.X64:
                     // WINDOWS
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 

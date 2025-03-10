@@ -1,8 +1,9 @@
 {
   "$schema": "http://json.schemastore.org/launchsettings.json",
-    "profiles": {
-      "Testing Tool": {
-        "commandName": "Project"
-      }
+  "profiles": {
+    "Testing Tool": {
+      "commandName": "Project",
+      "commandLineArgs": "384415648 10"
     }
   }
+}

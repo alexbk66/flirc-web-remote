@@ -1,0 +1,10 @@
+*.d
+*o
+*.swp
+*.tmp
+cscope.*
+buildresults/*
+tags
+.DS_Store
+*.dSYM*
+*.swo

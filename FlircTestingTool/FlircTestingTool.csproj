@@ -5,7 +5,12 @@
         <TargetFramework>net472</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
+        <Platforms>AnyCPU;x86</Platforms>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\FlircWrapper\FlircWrapper.csproj" />

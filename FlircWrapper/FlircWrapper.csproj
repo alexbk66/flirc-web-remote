@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net472</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
+        <Platforms>AnyCPU;x86</Platforms>
         <!--Nullable>enable</Nullable -->
     </PropertyGroup>
 

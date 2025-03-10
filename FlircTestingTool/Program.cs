@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 using FlircWrapper;
@@ -18,9 +20,13 @@ namespace FlircTestingTool
 
         public static void Main(string[] args)
         {
-            // dummy program for testing purposes
-            // used to build the wrappers around IR & Flirc libraries & communicatation with the actual device
-
+            uint scancode = 0; // 384415648;
+            RcProto protocol = RcProto.RC_PROTO_NEC;
+            if (args.Length >= 2)
+            {
+                uint.TryParse(args[0], out scancode);
+                Enum.TryParse(args[1], out protocol);
+            }
 
             Trace.Listeners.Add(new ConsoleTraceListener());
 
@@ -59,29 +65,63 @@ namespace FlircTestingTool
             }
             Console.WriteLine("Transmitter callback successfully registered...");
 
-            Console.WriteLine("Listening to commands...");
-            Console.WriteLine("'send' to resend, 'listen' to record packet for send, 'exit' to close");
-            ListenForCommands();
+
+            if (scancode != 0)
+            {
+                lastPacket = new IrProt()
+                {
+                    scancode = scancode,
+                    protocol = protocol,
+                };
+
+                TransmitRecordedPacket();
+            }
+            else
+            {
+                Console.WriteLine("Listening to commands...");
+                ListenForCommands();
+            }
+
+
             Console.WriteLine("Closing connection to device...");
             service.CloseConnection();
         }
 
+        const string command_listen = "l";
+        const string command_send = "s";
+        const string command_quit = "q";
+
         static void ListenForCommands()
         {
-            var command = "listen";
-            while (true)
-            {
-                //var command = Console.ReadLine() ?? string.Empty;
-                if (command.Equals("exit", StringComparison.OrdinalIgnoreCase))
-                    break;
+            string usage = $"Available commands: '{command_listen}', '{command_send}', '{command_quit}'.";
+            Console.WriteLine(usage);
 
-                if (command.Equals("listen", StringComparison.OrdinalIgnoreCase))
-                    RecordPacket();
-                else if (command.Equals("send", StringComparison.OrdinalIgnoreCase))
-                    TransmitRecordedPacket();
-                else
-                    Console.WriteLine("Unknown command. Available commands: 'send', 'listen', 'exit'.");
+            bool running = true;
+            while (running)
+            {
+                var command = Console.ReadLine() ?? string.Empty;
+
+                switch (command)
+                {
+                    case command_listen:
+                        RecordPacket();
+                        break;
+
+                    case command_send:
+                        TransmitRecordedPacket();
+                        break;
+
+                    case command_quit:
+                        Console.WriteLine("Stopped listening for commands...");
+                        running = false;
+                        break;
+
+                    default:
+                        Console.WriteLine($"Unknown command. {usage}");
+                        break;
+                }
             }
+
             Console.WriteLine("Stopped listening for commands...");
         }
 
@@ -95,6 +135,12 @@ namespace FlircTestingTool
             if (protos.Any())
             {
                 lastPacket = protos.FirstOrDefault();
+                if (lastPacket.HasValue)
+                {
+                    IrProt p = lastPacket.Value;
+                    int size1 = Marshal.SizeOf<IrProt>();
+                    int size2 = Unsafe.SizeOf<IrProt>();
+                }
                 //Console.WriteLine("Packet recorded, can now be sent with 'send' command...");
             }
             else
